@@ -64,7 +64,7 @@ function App() {
 
   const getDisplay = (pitch: keyof typeof SCIENTIFIC_PITCH_NOTATION) => {
     if (selectedMode === "PITCH") return SCIENTIFIC_PITCH_NOTATION[pitch];
-    if (!selectedRootPitch) return;
+    if (!selectedRootPitch) return SCIENTIFIC_PITCH_NOTATION[pitch];
     return getIntervalName(selectedRootPitch, pitch);
   };
 

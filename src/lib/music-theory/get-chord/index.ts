@@ -1,3 +1,4 @@
+import arraysMatch from "../../utils/arraysMatch";
 import { SCIENTIFIC_PITCH_NOTATION } from "../const";
 import { getIntervalPitch } from "../get-interval";
 import getRootPitch from "../get-root-pitch";
@@ -15,9 +16,8 @@ export function getChordTypes(pitches: number[]) {
     new Set(pitches.map((pitch) => getIntervalPitch(rootPitch, pitch))),
   );
   const findedChords = chords.filter((chord) => {
-    return chord.intervals.every((note) => intervals.includes(note));
+    return chord.intervals.some((i) => arraysMatch(i.sort(), intervals.sort()));
   });
-
   return findedChords.sort((a, b) => b.intervals.length - a.intervals.length);
 }
 
