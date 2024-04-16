@@ -4,7 +4,7 @@ type GetTuningOptions = {
   tuning: keyof typeof TUNINGS;
 };
 
-export function getScales(options?: GetTuningOptions) {
+export function getFrets(options?: GetTuningOptions) {
   const tuning = options?.tuning ?? "REGULAR";
 
   // TODO: 型周り直す

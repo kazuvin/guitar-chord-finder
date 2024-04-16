@@ -5,9 +5,9 @@ import {
   TUNINGS,
 } from "@/lib/music-theory/const";
 import { getChord } from "@/lib/music-theory/get-chord";
+import { getFrets } from "@/lib/music-theory/get-frets";
 import { getIntervalName } from "@/lib/music-theory/get-interval";
 import { getRootPitchBySelected } from "@/lib/music-theory/get-root-pitch";
-import { getScales } from "@/lib/music-theory/get-scales";
 import isSamePitchClass from "@/lib/music-theory/is-same-pitch-class";
 import { SelectedPitchState } from "@/lib/music-theory/types";
 import clsx from "clsx";
@@ -35,8 +35,8 @@ function useFretboard({ displayMode, tuning }: FretboardProps) {
     6: undefined,
   });
 
-  // 各1~6弦の SCIENTIFIC_PITCH_NOTATION
-  const scales = getScales({ tuning });
+  // 各1~6弦のフレット
+  const frets = getFrets({ tuning });
 
   // ルート音 (選択された音程から算出)
   const rootPitch = getRootPitchBySelected(selectedPitches);
@@ -81,7 +81,7 @@ function useFretboard({ displayMode, tuning }: FretboardProps) {
     return;
   };
 
-  return { scales, searchedChord, handleFretClick, getFretText, getFretStyle };
+  return { frets, searchedChord, handleFretClick, getFretText, getFretStyle };
 }
 
 /* ------------------------------------------------------------------------
@@ -89,7 +89,7 @@ function useFretboard({ displayMode, tuning }: FretboardProps) {
  ------------------------------------------------------------------------ */
 
 export default function Fretboard({ displayMode, tuning }: FretboardProps) {
-  const { scales, handleFretClick, getFretText, getFretStyle } = useFretboard({
+  const { frets, handleFretClick, getFretText, getFretStyle } = useFretboard({
     displayMode,
     tuning,
   });
@@ -101,7 +101,7 @@ export default function Fretboard({ displayMode, tuning }: FretboardProps) {
           (stringNum) => (
             <tr key={stringNum}>
               <th className="p-2">{stringNum}弦</th>
-              {scales[stringNum].map((pitch, index) => (
+              {frets[stringNum].map((pitch, index) => (
                 <td
                   key={SCIENTIFIC_PITCH_NOTATION[pitch]}
                   className={clsx(
