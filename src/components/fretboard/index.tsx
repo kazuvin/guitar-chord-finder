@@ -4,7 +4,6 @@ import {
   SCIENTIFIC_PITCH_NOTATION,
   TUNINGS,
 } from "@/lib/music-theory/const";
-import { getChord } from "@/lib/music-theory/get-chord";
 import { getFrets } from "@/lib/music-theory/get-frets";
 import { getIntervalName } from "@/lib/music-theory/get-interval";
 import { getRootPitchBySelected } from "@/lib/music-theory/get-root-pitch";
@@ -18,13 +17,19 @@ type FretboardProps = {
   displayMode: keyof typeof DISPLAY_MODE;
   /** チューニング */
   tuning: keyof typeof TUNINGS;
+  /** 選択した音程が変わった際に発火するイベントハンドラ */
+  onSelectedChange?: (pitchState: SelectedPitchState) => void;
 };
 
 /* ------------------------------------------------------------------------
    Fretboard Hook
  ------------------------------------------------------------------------ */
 
-function useFretboard({ displayMode, tuning }: FretboardProps) {
+function useFretboard({
+  displayMode,
+  tuning,
+  onSelectedChange,
+}: FretboardProps) {
   // 各1~6弦で選択した音程
   const [selectedPitches, setSelectedPitches] = useState<SelectedPitchState>({
     1: undefined,
@@ -41,23 +46,22 @@ function useFretboard({ displayMode, tuning }: FretboardProps) {
   // ルート音 (選択された音程から算出)
   const rootPitch = getRootPitchBySelected(selectedPitches);
 
-  // 検索されたコード
-  const searchedChord = rootPitch
-    ? getChord(
-        rootPitch as keyof typeof SCIENTIFIC_PITCH_NOTATION,
-        Object.values(selectedPitches).filter((pitch) => pitch) as number[],
-      )
-    : undefined;
-
   const handleFretClick = useCallback(
     (stringNum: keyof typeof GUITAR_STRINGS, pitch: number) => {
       if (selectedPitches[stringNum] === pitch) {
-        setSelectedPitches({ ...selectedPitches, [stringNum]: undefined });
+        const newSelectedPitches = {
+          ...selectedPitches,
+          [stringNum]: undefined,
+        };
+        setSelectedPitches(newSelectedPitches);
+        if (onSelectedChange) onSelectedChange(newSelectedPitches);
       } else {
-        setSelectedPitches({ ...selectedPitches, [stringNum]: pitch });
+        const newSelectedPitches = { ...selectedPitches, [stringNum]: pitch };
+        setSelectedPitches(newSelectedPitches);
+        if (onSelectedChange) onSelectedChange(newSelectedPitches);
       }
     },
-    [selectedPitches],
+    [onSelectedChange, selectedPitches],
   );
 
   const getFretText = (pitch: keyof typeof SCIENTIFIC_PITCH_NOTATION) => {
@@ -81,48 +85,44 @@ function useFretboard({ displayMode, tuning }: FretboardProps) {
     return;
   };
 
-  return { frets, searchedChord, handleFretClick, getFretText, getFretStyle };
+  return { frets, handleFretClick, getFretText, getFretStyle };
 }
 
 /* ------------------------------------------------------------------------
    Fretboard Component
  ------------------------------------------------------------------------ */
 
-export default function Fretboard({ displayMode, tuning }: FretboardProps) {
-  const { frets, handleFretClick, getFretText, getFretStyle } = useFretboard({
-    displayMode,
-    tuning,
-  });
+export default function Fretboard(props: FretboardProps) {
+  const { frets, handleFretClick, getFretText, getFretStyle } =
+    useFretboard(props);
 
   return (
     <table className="w-full table-fixed text-center text-sm">
       <tbody>
-        {([1, 2, 3, 4, 5, 6] as (keyof typeof GUITAR_STRINGS)[]).map(
-          (stringNum) => (
-            <tr key={stringNum}>
-              <th className="p-2">{stringNum}弦</th>
-              {frets[stringNum].map((pitch, index) => (
-                <td
-                  key={SCIENTIFIC_PITCH_NOTATION[pitch]}
+        {([1, 2, 3, 4, 5, 6] as const).map((stringNum) => (
+          <tr key={stringNum}>
+            <th className="p-2">{stringNum}弦</th>
+            {frets[stringNum].map((pitch, index) => (
+              <td
+                key={SCIENTIFIC_PITCH_NOTATION[pitch]}
+                className={clsx(
+                  "border text-gray-800 text-opacity-50",
+                  index === 0 ? "border-r-4" : undefined,
+                )}
+              >
+                <button
+                  onClick={() => handleFretClick(stringNum, pitch)}
                   className={clsx(
-                    "border text-gray-800 text-opacity-50",
-                    index === 0 ? "border-r-4" : undefined,
+                    "h-6 w-12 cursor-pointer",
+                    getFretStyle(stringNum, pitch),
                   )}
                 >
-                  <button
-                    onClick={() => handleFretClick(stringNum, pitch)}
-                    className={clsx(
-                      "h-6 w-12 cursor-pointer",
-                      getFretStyle(stringNum, pitch),
-                    )}
-                  >
-                    {getFretText(pitch)}
-                  </button>
-                </td>
-              ))}
-            </tr>
-          ),
-        )}
+                  {getFretText(pitch)}
+                </button>
+              </td>
+            ))}
+          </tr>
+        ))}
       </tbody>
     </table>
   );
