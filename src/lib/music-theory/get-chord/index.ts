@@ -7,7 +7,7 @@ import { chords } from "./chord-data";
 export function getChordClass(
   rootPitch: keyof typeof SCIENTIFIC_PITCH_NOTATION,
 ) {
-  return SCIENTIFIC_PITCH_NOTATION[rootPitch].replace(/[^A-Z]/g, "");
+  return SCIENTIFIC_PITCH_NOTATION[rootPitch].replace(/[^A-Z|#]/g, "");
 }
 
 export function getChordTypes(pitches: number[]) {
