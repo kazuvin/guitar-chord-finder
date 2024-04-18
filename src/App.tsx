@@ -5,13 +5,19 @@ import { SelectedPitchState } from "./lib/music-theory/types";
 import { getChord } from "./lib/music-theory/get-chord";
 import { getRootPitchBySelected } from "./lib/music-theory/get-root-pitch";
 import { SCIENTIFIC_PITCH_NOTATION } from "./lib/music-theory/const";
+import Piano from "./components/piano";
 
 function App() {
   const [searchedChord, setSearchedChord] = useState<string | undefined>(
     undefined,
   );
 
+  const [selectedPitches, setSelectedPitches] = useState<number[]>([]);
+
   const handleSelectedChange = (pitchState: SelectedPitchState) => {
+    setSelectedPitches(
+      Object.values(pitchState).filter((pitch) => pitch) as number[],
+    );
     setSearchedChord(
       getChord(
         getRootPitchBySelected(
@@ -34,6 +40,9 @@ function App() {
         tuning="REGULAR"
         onSelectedChange={handleSelectedChange}
       />
+      <div className="w-full max-w-screen-lg overflow-x-scroll">
+        <Piano selectedPitches={selectedPitches} />
+      </div>
     </main>
   );
 }
