@@ -13,24 +13,24 @@ export default function Piano({ selectedPitches }: PianoProps) {
   return (
     <div className="relative flex pb-2">
       {Object.entries(SCIENTIFIC_PITCH_NOTATION).map(([key, note]) => (
-        <button
+        <div
           key={key}
           style={{ left: Number(key) * 1.75 + 0.5 + "rem" }}
           className={clsx(
             "flex flex-shrink-0 items-end justify-center border p-4 text-sm",
             note.includes("#")
-              ? `absolute top-0 h-24 w-10 bg-black text-white text-opacity-90 `
-              : "h-40 w-12 bg-white text-gray-800 text-opacity-50",
+              ? `absolute top-0 h-24 w-10 bg-stone-950 text-white text-opacity-80`
+              : "h-40 w-12 text-white text-opacity-80",
             selectedPitches?.some((pitch) =>
               isSamePitchClass(pitch, Number(key)),
             )
-              ? "bg-red-200"
+              ? "!bg-red-400"
               : "",
-            key === rootPitch.toString() ? "!bg-red-400" : "",
+            key === rootPitch.toString() ? "!bg-red-800" : "",
           )}
         >
           {note}
-        </button>
+        </div>
       ))}
     </div>
   );

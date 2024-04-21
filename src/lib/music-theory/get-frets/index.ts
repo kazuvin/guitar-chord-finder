@@ -17,11 +17,11 @@ export function getFrets(options?: GetTuningOptions) {
     ) as (keyof typeof SCIENTIFIC_PITCH_NOTATION)[];
 
   return {
-    1: createScale(TUNINGS[tuning][1]),
-    2: createScale(TUNINGS[tuning][2]),
-    3: createScale(TUNINGS[tuning][3]),
-    4: createScale(TUNINGS[tuning][4]),
-    5: createScale(TUNINGS[tuning][5]),
-    6: createScale(TUNINGS[tuning][6]),
+    1: createScale(TUNINGS[tuning]["openstring"][1]),
+    2: createScale(TUNINGS[tuning]["openstring"][2]),
+    3: createScale(TUNINGS[tuning]["openstring"][3]),
+    4: createScale(TUNINGS[tuning]["openstring"][4]),
+    5: createScale(TUNINGS[tuning]["openstring"][5]),
+    6: createScale(TUNINGS[tuning]["openstring"][6]),
   };
 }

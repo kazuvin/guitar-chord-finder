@@ -1,4 +1,4 @@
-export const SCALE_LENGTH = 21;
+export const SCALE_LENGTH = 22;
 
 export const DISPLAY_MODE = {
   PITCH: "音程",
@@ -122,19 +122,36 @@ export const SCIENTIFIC_PITCH_NOTATION = {
 
 export const TUNINGS = {
   REGULAR: {
-    1: 43,
-    2: 38,
-    3: 34,
-    4: 29,
-    5: 24,
-    6: 19,
+    name: "レギュラー",
+    openstring: {
+      1: 43,
+      2: 38,
+      3: 34,
+      4: 29,
+      5: 24,
+      6: 19,
+    },
   },
-  HURF_STEP_DOWN: {
-    1: 42,
-    2: 37,
-    3: 33,
-    4: 28,
-    5: 23,
-    6: 18,
+  HARF_STEP_DOWN: {
+    name: "半音下げ",
+    openstring: {
+      1: 42,
+      2: 37,
+      3: 33,
+      4: 28,
+      5: 23,
+      6: 18,
+    },
+  },
+  DADGAD: {
+    name: "DADGAD",
+    openstring: {
+      1: 41,
+      2: 36,
+      3: 34,
+      4: 29,
+      5: 24,
+      6: 17,
+    },
   },
 } as const;
