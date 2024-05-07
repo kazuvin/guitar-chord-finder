@@ -1,18 +1,18 @@
-import { SCIENTIFIC_PITCH_NOTATION } from "@/lib/music-theory/const";
+import { SPN } from "@/lib/music-theory/const";
 import getRootPitch from "@/lib/music-theory/get-root-pitch";
 import isSamePitchClass from "@/lib/music-theory/is-same-pitch-class";
 import clsx from "clsx";
 
 type PianoProps = {
-  selectedPitches?: number[];
+  fretState?: (keyof typeof SPN)[];
 };
 
-export default function Piano({ selectedPitches }: PianoProps) {
-  const rootPitch = getRootPitch(selectedPitches ?? []);
+export default function Piano({ fretState }: PianoProps) {
+  const rootPitch = getRootPitch(fretState ?? []);
 
   return (
     <div className="relative flex pb-2">
-      {Object.entries(SCIENTIFIC_PITCH_NOTATION).map(([key, note]) => (
+      {Object.entries(SPN).map(([key, note]) => (
         <div
           key={key}
           style={{ left: Number(key) * 1.75 + 0.5 + "rem" }}
@@ -21,8 +21,8 @@ export default function Piano({ selectedPitches }: PianoProps) {
             note.includes("#")
               ? `absolute top-0 h-24 w-10 bg-stone-950 text-white text-opacity-80`
               : "h-40 w-12 text-white text-opacity-80",
-            selectedPitches?.some((pitch) =>
-              isSamePitchClass(pitch, Number(key)),
+            fretState?.some((pitch) =>
+              isSamePitchClass(pitch, Number(key) as keyof typeof SPN),
             )
               ? "!bg-red-400"
               : "",

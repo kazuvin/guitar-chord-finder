@@ -1,19 +1,14 @@
 import { useState } from "react";
 import "./App.css";
-import Fletboard from "./components/fretboard";
-import { SelectedPitchState } from "./lib/music-theory/types";
+import Fretboard from "./components/fretboard";
 import { getChord } from "./lib/music-theory/get-chord";
-import { getRootPitchBySelected } from "./lib/music-theory/get-root-pitch";
-import {
-  DISPLAY_MODE,
-  SCIENTIFIC_PITCH_NOTATION,
-  TUNINGS,
-} from "./lib/music-theory/const";
+import { DISPLAY_MODE, SPN, TUNINGS } from "./lib/music-theory/const";
 import Piano from "./components/piano";
 import { Select, SelectItem } from "./components/select";
+import { FretState } from "./lib/music-theory/types";
 
 function App() {
-  const [selectedPitches, setSelectedPitches] = useState<SelectedPitchState>({
+  const [fretState, setFretState] = useState<FretState>({
     1: undefined,
     2: undefined,
     3: undefined,
@@ -29,18 +24,15 @@ function App() {
     useState<keyof typeof DISPLAY_MODE>("PITCH");
 
   const searchedChord = getChord(
-    getRootPitchBySelected(
-      selectedPitches,
-    ) as keyof typeof SCIENTIFIC_PITCH_NOTATION,
-    Object.values(selectedPitches).filter((pitch) => pitch) as number[],
+    Object.values(fretState).filter((pitch) => pitch) as (keyof typeof SPN)[],
   );
 
-  const handleSelectedChange = (pitchState: SelectedPitchState) => {
-    setSelectedPitches(pitchState);
+  const handleSelectedChange = (pitchState: FretState) => {
+    setFretState(pitchState);
   };
 
   const handleClear = () => {
-    setSelectedPitches({
+    setFretState({
       1: undefined,
       2: undefined,
       3: undefined,
@@ -54,7 +46,7 @@ function App() {
     <main className="mx-auto flex min-h-screen flex-1 flex-col items-center justify-center gap-8">
       <div className="flex h-20 items-center">
         {(() => {
-          if (Object.values(selectedPitches).every((pitch) => !pitch))
+          if (Object.values(fretState).every((pitch) => !pitch))
             return (
               <div className="text-white text-opacity-70">
                 フレットを選択してコードを検索しましょう
@@ -111,8 +103,8 @@ function App() {
         </div>
       </div>
       <div className="w-full max-w-screen-lg overflow-x-scroll">
-        <Fletboard
-          forceSelectedPitches={selectedPitches}
+        <Fretboard
+          forceSelectedPitches={fretState}
           displayMode={selectedDisplayMode}
           tuning={selectedTuning}
           onSelectedChange={handleSelectedChange}
@@ -121,8 +113,10 @@ function App() {
 
       <div className="w-full max-w-screen-lg overflow-x-scroll">
         <Piano
-          selectedPitches={
-            Object.values(selectedPitches).filter((pitch) => pitch) as number[]
+          fretState={
+            Object.values(fretState).filter(
+              (pitch) => !!pitch,
+            ) as (keyof typeof SPN)[]
           }
         />
       </div>

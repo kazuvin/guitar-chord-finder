@@ -1,6 +1,6 @@
-import { GUITAR_STRINGS } from "../const";
+import { GUITAR_STRINGS, SPN } from "../const";
 
-export type SelectedPitchState = Record<
+export type FretState = Record<
   keyof typeof GUITAR_STRINGS,
-  number | undefined
+  keyof typeof SPN | undefined
 >;

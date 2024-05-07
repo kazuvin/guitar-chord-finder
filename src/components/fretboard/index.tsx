@@ -1,26 +1,26 @@
 import {
   DISPLAY_MODE,
   GUITAR_STRINGS,
-  SCIENTIFIC_PITCH_NOTATION,
+  SPN,
   TUNINGS,
 } from "@/lib/music-theory/const";
 import { getFrets } from "@/lib/music-theory/get-frets";
 import { getIntervalName } from "@/lib/music-theory/get-interval";
 import { getRootPitchBySelected } from "@/lib/music-theory/get-root-pitch";
 import isSamePitchClass from "@/lib/music-theory/is-same-pitch-class";
-import { SelectedPitchState } from "@/lib/music-theory/types";
+import { FretState } from "@/lib/music-theory/types";
 import clsx from "clsx";
 import { useCallback, useState } from "react";
 
 type FretboardProps = {
   /** 選択状態 */
-  forceSelectedPitches?: SelectedPitchState;
+  forceSelectedPitches?: FretState;
   /** 表示モード (音程、ルートからのディグリー) */
   displayMode: keyof typeof DISPLAY_MODE;
   /** チューニング */
   tuning: keyof typeof TUNINGS;
   /** 選択した音程が変わった際に発火するイベントハンドラ */
-  onSelectedChange?: (pitchState: SelectedPitchState) => void;
+  onSelectedChange?: (pitchState: FretState) => void;
 };
 
 /* ------------------------------------------------------------------------
@@ -34,7 +34,7 @@ function useFretboard({
   onSelectedChange,
 }: FretboardProps) {
   // 各1~6弦で選択した音程
-  const [selectedPitches, setSelectedPitches] = useState<SelectedPitchState>({
+  const [fretState, setFretState] = useState<FretState>({
     1: undefined,
     2: undefined,
     3: undefined,
@@ -43,7 +43,7 @@ function useFretboard({
     6: undefined,
   });
 
-  const sPitches = forceSelectedPitches ?? selectedPitches;
+  const sPitches = forceSelectedPitches ?? fretState;
 
   // 各1~6弦のフレット
   const frets = getFrets({ tuning });
@@ -58,26 +58,26 @@ function useFretboard({
           ...sPitches,
           [stringNum]: undefined,
         };
-        setSelectedPitches(newSelectedPitches);
+        setFretState(newSelectedPitches);
         if (onSelectedChange) onSelectedChange(newSelectedPitches);
       } else {
         const newSelectedPitches = { ...sPitches, [stringNum]: pitch };
-        setSelectedPitches(newSelectedPitches);
+        setFretState(newSelectedPitches);
         if (onSelectedChange) onSelectedChange(newSelectedPitches);
       }
     },
     [onSelectedChange, sPitches],
   );
 
-  const getFretText = (pitch: keyof typeof SCIENTIFIC_PITCH_NOTATION) => {
-    if (displayMode === "PITCH") return SCIENTIFIC_PITCH_NOTATION[pitch];
-    if (!rootPitch) return SCIENTIFIC_PITCH_NOTATION[pitch];
+  const getFretText = (pitch: keyof typeof SPN) => {
+    if (displayMode === "PITCH") return SPN[pitch];
+    if (!rootPitch) return SPN[pitch];
     return getIntervalName(rootPitch, pitch);
   };
 
   const getFretStyle = (
     stringNum: keyof typeof GUITAR_STRINGS,
-    pitch: number,
+    pitch: keyof typeof SPN,
   ) => {
     if (sPitches[stringNum] === pitch) return "font-bold text-red-600";
     if (
@@ -113,7 +113,7 @@ export default function Fretboard(props: FretboardProps) {
             <th className="h-12 w-16 p-2">{stringNum}弦</th>
             {frets[stringNum].map((pitch, index) => (
               <td
-                key={SCIENTIFIC_PITCH_NOTATION[pitch]}
+                key={SPN[pitch]}
                 className={clsx(
                   "h-12 w-16 border text-white text-opacity-80",
                   index === 0 ? "border-r-8" : undefined,

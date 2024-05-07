@@ -1,10 +1,19 @@
-export const SCALE_LENGTH = 22;
+/**
+ * フレットの長さ
+ */
+export const FRETS_LENGTH = 22;
 
+/**
+ * 表示モード
+ */
 export const DISPLAY_MODE = {
   PITCH: "音程",
   DIGREE: "度数",
 };
 
+/**
+ * ギター弦
+ */
 export const GUITAR_STRINGS = {
   1: "1弦",
   2: "2弦",
@@ -14,6 +23,13 @@ export const GUITAR_STRINGS = {
   6: "6弦",
 } as const;
 
+/**
+ * 音程
+ *
+ * **Details**
+ *
+ * 数値（インデックス）と音程の名称を関連付けたオブジェクトであり、それぞれ西洋音楽の12音階の各音程に対応しており、ピアノの白鍵と黒鍵を含む全ての半音が含まれている。
+ */
 export const INTERVAL = {
   0: "R",
   1: "m2(♭9)",
@@ -29,7 +45,14 @@ export const INTERVAL = {
   11: "M7",
 } as const;
 
-export const SCIENTIFIC_PITCH_NOTATION = {
+/**
+ * Scientific pitch notation (SPN)
+ *
+ * **Details**
+ *
+ * 科学的ピッチ記譜法（SPN）は、音名（必要に応じて臨時記号を含む）とピッチのオクターブを示す数字を組み合わせて定義する音の高さであり、それを数値（インデックス）とSPNの名称で関連付けたオブジェクト。
+ */
+export const SPN = {
   0: "A0",
   1: "A#0",
   2: "B0",
@@ -120,6 +143,9 @@ export const SCIENTIFIC_PITCH_NOTATION = {
   87: "C8",
 } as const;
 
+/**
+ * ギターのチューニング
+ */
 export const TUNINGS = {
   REGULAR: {
     name: "レギュラー",
